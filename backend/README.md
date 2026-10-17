@@ -21,9 +21,9 @@ The backend defaults to `gemini-3.6-flash` and retries temporary service errors.
 
 ## Endpoints
 
-- `POST /api/analyze-file` — multipart form with `file` and optional `language`; returns extracted codes with explanations.
+- `POST /api/analyze-file` — multipart form with `file` and optional `language`; returns extracted codes, explanations, and a short-lived `analysisId`.
 - `POST /api/obd/lookup` — JSON `{ "code": "P0300" }`; returns an English explanation.
-- `POST /api/reports` — JSON `{ "name": "...", "phone": "...", "amount": 2500, "language": "Hindi", "codes": ["P0300"] }`; performs server-side lookups, allocates a Car ID, writes the PDF, and returns `carId` and `downloadUrl`.
+- `POST /api/reports` — JSON `{ "name": "...", "phone": "...", "amount": 2500, "language": "Hindi", "analysisId": "..." }`; uses the completed analysis, allocates a Car ID, writes the PDF, and returns `carId` and `downloadUrl`. An analysis expires after 30 minutes.
 - `GET /reports/:fileName` — downloads a generated PDF.
 
 ## Car ID persistence and deployment
