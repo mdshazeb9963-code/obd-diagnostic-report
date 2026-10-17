@@ -19,6 +19,8 @@ Open <http://localhost:4000>. The server also exposes `GET /api/health`.
 
 The backend defaults to `gemini-3.8-flash` through Google's Interactions API and retries temporary service errors. A legacy `GEMINI_MODEL=gemini-2.5-flash` value is automatically mapped to Gemini 3.8 Flash. The upload endpoint accepts TXT, CSV, and LOG files (code extraction runs locally), plus PDF, PNG, JPG, and WEBP scans (Gemini reads the attachment). The selected language is sent to the Gemini lookup service so both the code breakdown and its explanation use that language. The PDF report contains customer name, phone, amount, language, findings, and Car ID.
 
+Gemini rate limits are applied per Google Cloud project, not per individual API key. Creating another key in the same project will not increase its quota; check the project's Usage and Rate limits in Google AI Studio. To switch keys, replace `GEMINI_API_KEY` in the local `.env` file or the server's secret settings, then restart the backend. Never paste the key into the browser or commit it to GitHub.
+
 ## Endpoints
 
 - `POST /api/analyze-file` — multipart form with `file` and optional `language`; returns extracted codes, explanations, and a short-lived `analysisId`.

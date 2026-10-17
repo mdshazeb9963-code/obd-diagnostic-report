@@ -80,10 +80,20 @@ async function generateInteraction(input, { maxOutputTokens = 2048 } = {}) {
 
     const providerMessage = payload?.error?.message || payload?.errors?.[0]?.message || `Gemini returned ${response.status}`;
     const error = new Error(providerMessage);
-    error.statusCode = response.status === 429 || response.status === 503 ? 503 : 502;
-    error.publicMessage = error.statusCode === 503
-      ? "Gemini is temporarily busy or rate-limited. Please try again shortly."
-      : `Gemini rejected this request: ${providerMessage}`;
+    const providerStatus = String(payload?.error?.status || payload?.error?.code || "").toUpperCase();
+    if (response.status === 429 || providerStatus === "RESOURCE_EXHAUSTED") {
+      error.statusCode = 429;
+      error.publicMessage = "Gemini's quota or rate limit was reached. Limits apply to the Google Cloud project, so a new key in the same project will not raise them. Check Usage and Rate limits in Google AI Studio, wait for the limit to reset, or use a key from a project with available quota.";
+    } else if ([401, 403].includes(response.status)) {
+      error.statusCode = 502;
+      error.publicMessage = "Gemini rejected the API key or project access. Check the key and Gemini API access in Google AI Studio, then update GEMINI_API_KEY in backend/.env and restart the server.";
+    } else if (response.status === 503) {
+      error.statusCode = 503;
+      error.publicMessage = "Gemini is temporarily unavailable. Please wait a little and try again.";
+    } else {
+      error.statusCode = 502;
+      error.publicMessage = `Gemini rejected this request: ${providerMessage}`;
+    }
     throw error;
   }
 
