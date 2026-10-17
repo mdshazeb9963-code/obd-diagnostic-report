@@ -71,7 +71,7 @@ const languageSchema = z.string().trim().min(2).max(40)
   .regex(/^[\p{L}\p{M}\s().'-]+$/u, "Enter a language name, such as Hindi or Hinglish.");
 const reportSchema = z.object({
   name: z.string().trim().min(1).max(100),
-  phone: z.string().trim().min(5).max(30),
+  phone: z.string().trim().min(1).max(80),
   amount: z.number().finite().min(0).max(1_000_000_000).default(0),
   language: languageSchema.default("English"),
   analysisId: z.string().uuid().optional(),
@@ -81,6 +81,14 @@ const reportSchema = z.object({
 });
 
 app.get("/api/health", (_req, res) => res.json({ status: "ok" }));
+
+app.get("/api/next-car-id", async (_req, res, next) => {
+  try {
+    return res.json({ carId: await idStore.peekNextId() });
+  } catch (error) {
+    next(error);
+  }
+});
 
 app.post("/api/analyze-file", upload.single("file"), async (req, res, next) => {
   try {
@@ -153,8 +161,6 @@ app.post("/api/reports", async (req, res, next) => {
       outputPath,
       report: { carId, name, phone, amount, language, codes: findings, createdAt }
     });
-    if (analysisId) analysisCache.delete(analysisId);
-
     const baseUrl = (process.env.PUBLIC_BASE_URL || `${req.protocol}://${req.get("host")}`)
       .replace(/\/$/, "");
     return res.status(201).json({

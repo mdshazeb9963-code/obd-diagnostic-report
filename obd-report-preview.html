@@ -3,387 +3,142 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#102c43">
-  <title>OBD Assist · Diagnostic reports</title>
+  <meta name="theme-color" content="#ffffff">
+  <title>Smart Library · Add New Car</title>
   <style>
-    :root{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#172535;background:#f3f6f8;font-synthesis:none;text-rendering:optimizeLegibility}
-    *{box-sizing:border-box}
-    body{margin:0;min-width:320px;min-height:100vh;background:radial-gradient(ellipse at 15% 0%,#e4edf2 0,transparent 32rem),#f3f6f8}
-    button,input,select{font:inherit}
-    button{cursor:pointer}
-    .shell{width:min(100% - 32px,900px);margin:0 auto;padding:44px 0 64px}
-    .hero{padding:4px 4px 26px}
-    .brand{display:flex;align-items:center;gap:10px;color:#315c77;font-size:.76rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
-    .brand-mark{display:grid;place-items:center;width:30px;height:30px;border-radius:9px;background:#dcebf3;color:#17648d}
-    h1{max-width:720px;margin:16px 0 9px;color:#102c43;font-size:clamp(2rem,5vw,3.15rem);line-height:1.08;letter-spacing:-.045em}
-    .hero-copy{max-width:630px;margin:0;color:#5c6c7a;font-size:1.02rem;line-height:1.65}
-    .hero-notes{display:flex;flex-wrap:wrap;gap:9px;margin-top:20px}
-    .hero-notes span{display:inline-flex;align-items:center;gap:7px;padding:7px 10px;border:1px solid #d7e2e9;border-radius:999px;background:#ffffffaa;color:#456073;font-size:.78rem;font-weight:650}
-    .panel{margin-top:14px;padding:26px;border:1px solid #dfe7ec;border-radius:18px;background:#fff;box-shadow:0 14px 42px #193a5010}
-    .section-heading{display:flex;align-items:flex-start;gap:14px;margin-bottom:20px}
-    .step{display:grid;place-items:center;flex:none;width:34px;height:34px;border-radius:10px;background:#eaf3f8;color:#17648d;font-size:.77rem;font-weight:800}
-    h2{margin:0;color:#102c43;font-size:1.13rem;letter-spacing:-.015em}
-    .section-heading p{margin:5px 0 0;color:#6b7a87;font-size:.86rem;line-height:1.5}
-    .drop-zone{display:grid;place-items:center;min-height:190px;padding:23px;border:1.5px dashed #b5cbd8;border-radius:14px;background:#f8fbfd;text-align:center;transition:.16s ease}
-    .drop-zone:hover,.drop-zone.dragging{border-color:#17648d;background:#f0f8fc;box-shadow:inset 0 0 0 2px #17648d18}
-    .upload-icon{display:grid;place-items:center;width:44px;height:44px;margin-bottom:12px;border-radius:13px;background:#e5f0f6;color:#17648d}
-    .drop-title{margin:0;color:#20384a;font-weight:750}
-    .drop-subtitle{margin:5px 0 13px;color:#778692;font-size:.84rem}
-    .choose-file{min-height:38px;padding:0 15px;border:1px solid #b8cbd7;border-radius:8px;background:white;color:#195d7c;font-size:.84rem;font-weight:750}
-    .choose-file:hover{background:#edf6fa}
-    .file-name{max-width:100%;margin:12px 0 0;color:#435766;font-size:.8rem;overflow-wrap:anywhere}
-    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
-    .hint{margin:10px 1px 0;color:#758391;font-size:.76rem;line-height:1.5}
-    .language-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px}
-    .field{display:grid;gap:7px}
-    .field label,.field-label{color:#23394b;font-size:.84rem;font-weight:700}
-    .field input,.field select{width:100%;min-height:45px;padding:10px 12px;border:1px solid #cbd7df;border-radius:9px;background:#fff;color:#1f3141}
-    .field input:focus,.field select:focus{outline:3px solid #2977a42b;border-color:#2977a4}
-    .primary{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;min-height:51px;margin-top:19px;padding:0 18px;border:0;border-radius:9px;background:#17648d;color:#fff;font-weight:780;letter-spacing:.005em;transition:.15s}
-    .primary:hover{background:#104e70}
-    .primary:disabled{opacity:.62;cursor:wait}
-    .secondary{min-height:40px;padding:0 13px;border:1px solid #c4d5df;border-radius:8px;background:#fff;color:#195d7c;font-size:.83rem;font-weight:700}
-    .secondary:hover{background:#f1f7fa}
-    .alert{margin-top:16px;padding:13px 15px;border-radius:9px;font-size:.88rem;line-height:1.55}
-    .alert.error{border:1px solid #efcaca;background:#fff2f2;color:#922a2a}
-    .alert.success{border:1px solid #c5e4d0;background:#eff9f2;color:#1c6841}
-    .results-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
-    .results-count{margin:4px 0 0;color:#687a88;font-size:.83rem}
-    .result-list{display:grid;gap:12px}
-    .result-card{padding:17px;border:1px solid #dce6ec;border-radius:12px;background:#fbfdfe}
-    .result-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
-    .code{display:inline-flex;align-items:center;padding:6px 10px;border-radius:7px;background:#e6f0f5;color:#113e59;font-size:.98rem;font-weight:850;letter-spacing:.05em}
-    .listen{display:inline-flex;align-items:center;gap:7px;min-height:35px;padding:0 11px;border:1px solid #c2d5df;border-radius:8px;background:white;color:#195b79;font-size:.78rem;font-weight:750}
-    .listen:hover{background:#edf6fa}
-    .meaning{margin:0;color:#364958;font-size:.92rem;line-height:1.66;white-space:pre-wrap;overflow-wrap:anywhere}
-    [dir=rtl] .meaning{text-align:right}
-    .customer-fields{display:grid;grid-template-columns:1.1fr 1fr 1fr;gap:14px}
-    .subtle{margin:11px 0 0;color:#768592;font-size:.76rem;line-height:1.5}
-    .report-link{display:inline-flex;align-items:center;gap:8px;margin-top:10px;color:#17623e;font-weight:750;text-decoration-thickness:1px;text-underline-offset:3px}
-    .car-badge{display:inline-block;margin-bottom:9px;padding:5px 9px;border-radius:999px;background:#e5f4eb;color:#1b6a42;font-size:.76rem;font-weight:800;letter-spacing:.03em}
-    .next-car{margin-top:14px}
-    .hidden{display:none!important}
-    footer{padding:18px 6px 0;color:#83909b;font-size:.75rem;line-height:1.5;text-align:center}
-    @media(max-width:640px){.shell{width:min(100% - 24px,900px);padding-top:27px}.panel{padding:19px;border-radius:15px}.language-row,.customer-fields{grid-template-columns:1fr}.hero{padding-bottom:18px}.drop-zone{min-height:170px}.results-header{align-items:flex-start;flex-direction:column}.results-header .secondary{width:100%}}
+    :root{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#121923;background:#eef2f4;font-synthesis:none;text-rendering:optimizeLegibility}
+    *{box-sizing:border-box}body{margin:0;min-width:320px;min-height:100vh;background:#eef2f4}button,input,select{font:inherit}button{cursor:pointer}
+    .topbar{height:78px;padding:0 max(32px,calc((100vw - 580px)/2));display:flex;align-items:center;gap:14px;background:#fff;border-bottom:1px solid #dce1e5}
+    .logo{display:grid;place-items:center;width:42px;height:42px;border-radius:10px;background:#edf1f3;color:#172c40}.logo svg{width:28px;height:28px}.brand{font-size:20px;font-weight:720;letter-spacing:-.035em}
+    main{width:min(100% - 120px,1100px);margin:36px auto 64px}.page-heading{margin:0 0 28px;font-size:clamp(30px,4vw,38px);line-height:1.15;letter-spacing:-.045em;color:#111923}
+    .workspace{display:grid;grid-template-columns:minmax(190px,.72fr) minmax(280px,1fr);align-items:start;gap:28px}.input-column{min-width:0}.column-title{margin:0 0 13px;font-size:20px;font-weight:700;letter-spacing:-.025em}
+    .drop-zone{min-height:158px;display:grid;place-items:center;padding:18px;border:1.5px dashed #a8b3ba;border-radius:15px;background:#f4f6f7;text-align:center;transition:background .15s,border-color .15s,box-shadow .15s}
+    .drop-zone:hover,.drop-zone.dragging{border-color:#2873cb;background:#eff6ff;box-shadow:inset 0 0 0 2px #2873cb19}.drop-zone:focus-visible{outline:3px solid #2873cb55}
+    .upload-icon{color:#64717c;margin:0 auto 6px}.drop-title{margin:0;color:#1f2a33;font-weight:700}.drop-subtitle{margin:3px 0 9px;color:#59656e;font-size:.86rem}.choose-file{border:0;background:transparent;color:#1762ac;font-weight:700;padding:2px 5px;text-decoration:underline;text-underline-offset:2px}
+    .file-name{max-width:100%;margin:8px 0 0;color:#62707a;font-size:.78rem;overflow-wrap:anywhere}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+    .scan-button{width:100%;min-height:43px;margin:13px 0 15px;border:0;border-radius:8px;background:#286abd;color:#fff;font-weight:730;box-shadow:0 2px 4px #142d4c2e}.scan-button:hover{background:#205da8}.scan-button:disabled,.add-button:disabled{opacity:.65;cursor:wait}
+    .language-mini{width:74px;height:32px;padding:0 4px;border:1px solid #d6dde2;border-radius:7px;background:#fff;color:#384650;font-size:.68rem}.language-mini:focus{outline:3px solid #2675cf30;border-color:#2876cf}.custom-language{width:100%;height:35px;margin:0 0 10px;padding:7px 10px;border:1px solid #d6dde2;border-radius:7px;background:#fff;color:#202a32;font-size:.8rem}.field label{font-size:.88rem;font-weight:680;color:#202a32}.field input{width:100%;height:42px;padding:9px 11px;border:1px solid #b9c2c8;border-radius:7px;background:#fff;color:#202a32}.field input:focus{outline:3px solid #2675cf30;border-color:#2876cf}
+    .field{display:grid;gap:6px;margin-top:12px}.field input{height:41px}.id-label{margin:0 0 3px;color:#303942;font-size:.89rem}.amount-wrap{display:flex;height:41px;border:1px solid #b9c2c8;border-radius:7px;background:#fff;overflow:hidden}.amount-wrap:focus-within{outline:3px solid #2675cf30;border-color:#2876cf}.currency{display:grid;place-items:center;width:39px;flex:none;border-right:1px solid #e0e4e7;color:#59636a}.amount-wrap input{width:auto;min-width:0;flex:1;height:39px;border:0;border-radius:0;outline:0!important;box-shadow:none!important}
+    .add-button{width:100%;min-height:44px;margin-top:17px;border:0;border-radius:8px;background:#153d5d;color:#fff;font-weight:720}.add-button:hover{background:#0f304c}.result-message{margin-top:12px;padding:11px 12px;border-radius:8px;font-size:.84rem;line-height:1.5}.result-message.error{border:1px solid #ecc2c2;background:#fff0f0;color:#8b2525}.result-message.success{border:1px solid #c9e4d0;background:#f0f9f2;color:#215d38}.hidden{display:none!important}.report-link{color:#17633d;font-weight:750;text-underline-offset:3px}
+    .report-card{min-height:520px;padding:19px 18px 21px;border:1px solid #d5dadd;border-radius:20px;background:#fff;box-shadow:0 8px 14px #172d3b24,0 2px 5px #172d3b10}.report-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:0 3px 14px}.report-title{margin:0;font-size:19px;font-weight:720;letter-spacing:-.025em}.report-actions{display:flex;align-items:center;gap:3px}.icon-button{display:grid;place-items:center;width:30px;height:32px;border:1px solid transparent;border-radius:8px;background:transparent;color:#53616a}.icon-button:hover:not(:disabled){border-color:#d8e0e5;background:#f4f7f8;color:#1c5d92}.icon-button:disabled{opacity:.42;cursor:not-allowed}
+    .result-list{min-height:363px;padding:0 1px;border:1px solid #d4d8db;border-radius:14px;overflow:hidden}.empty-state{min-height:361px;display:grid;place-content:center;padding:24px;color:#78858e;text-align:center}.empty-state svg{margin:0 auto 12px;color:#9aa5ac}.empty-state p{max-width:270px;margin:0;font-size:.88rem;line-height:1.55}
+    .result-item{padding:18px 16px 17px}.result-item+.result-item{border-top:1px solid #d9dddf}.result-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:5px}.code{margin:0;font-size:18px;font-weight:800;letter-spacing:.015em;color:#17202a}.listen-button{display:inline-flex;align-items:center;gap:5px;min-height:30px;padding:0 8px;border:1px solid #d5dee4;border-radius:7px;background:#fff;color:#315b78;font-size:.75rem;font-weight:700}.listen-button:hover{background:#eef5f8}.meaning{margin:0;color:#323a41;font-size:.89rem;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere}.finding-tags{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}.finding-tags span{padding:3px 8px;border-radius:999px;background:#eef2f4;color:#65727a;font-size:.69rem}
+    .report-foot{display:flex;justify-content:space-between;gap:12px;margin:12px 3px 0;color:#879198;font-size:.72rem;line-height:1.4}.sr-status{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+    @media(max-width:640px){.topbar{height:68px;padding:0 20px}main{width:min(100% - 32px,560px);margin-top:27px}.workspace{grid-template-columns:1fr;gap:26px}.page-heading{margin-bottom:22px}.report-card{min-height:420px}.result-list,.empty-state{min-height:280px}.report-card{padding:16px 14px}}
+    @media(max-width:420px){.topbar{padding:0 16px}.brand{font-size:18px}main{width:min(100% - 24px,560px)}.report-heading{align-items:flex-start;flex-wrap:wrap}.report-actions{gap:3px}}
   </style>
 </head>
 <body>
-  <main class="shell">
-    <header class="hero">
-      <div class="brand"><span class="brand-mark" aria-hidden="true">✦</span> Workshop diagnostic assistant</div>
-      <h1>Make every fault code easier to understand.</h1>
-      <p class="hero-copy">Upload an OBD scan or report. Get each code explained in your chosen language, listen to the findings, then save a customer-ready PDF.</p>
-      <div class="hero-notes" aria-label="App features">
-        <span>⌁ File and scan reading</span><span>◉ Multilingual explanations</span><span>↓ PDF report with car ID</span>
-      </div>
-    </header>
-
-    <section class="panel" aria-labelledby="uploadHeading">
-      <div class="section-heading">
-        <span class="step" aria-hidden="true">01</span>
-        <div><h2 id="uploadHeading">Upload a diagnostic file</h2><p>Drop in the scan or choose a file from this device.</p></div>
-      </div>
-      <form id="scanForm">
-        <input id="fileInput" class="sr-only" type="file" accept=".txt,.csv,.log,.pdf,.jpg,.jpeg,.png,.webp" aria-label="Choose diagnostic file">
-        <div id="dropZone" class="drop-zone" role="button" tabindex="0" aria-label="Choose or drop a diagnostic file">
-          <div>
-            <div class="upload-icon" aria-hidden="true">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5M5 14v4.5A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5V14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  <header class="topbar">
+    <span class="logo" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none"><rect x="3" y="7" width="26" height="19" rx="6" fill="#162c40"/><path d="M8 7 10 4h12l2 3" stroke="#162c40" stroke-width="2" stroke-linecap="round"/><path d="M7 14h4l2-3 3 9 3-6 2 3h4" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="27" r="2" fill="#162c40"/><circle cx="23" cy="27" r="2" fill="#162c40"/></svg></span>
+    <span class="brand">Smart Library</span>
+  </header>
+  <main>
+    <h1 class="page-heading">Add New Car</h1>
+    <div class="workspace">
+      <section class="input-column" aria-labelledby="inputHeading">
+        <h2 id="inputHeading" class="column-title">Input/Upload</h2>
+        <form id="scanForm">
+          <input id="fileInput" class="sr-only" type="file" accept=".txt,.csv,.log,.pdf,.jpg,.jpeg,.png,.webp" aria-label="Choose diagnostic file">
+          <div id="dropZone" class="drop-zone" role="button" tabindex="0" aria-label="Drag and drop a diagnostic file or choose one">
+            <div>
+              <div class="upload-icon" aria-hidden="true"><svg width="42" height="36" viewBox="0 0 42 36" fill="none"><path d="M12 28h-1a7 7 0 0 1-.5-14A10.5 10.5 0 0 1 31 12a8 8 0 0 1 1 16h-2" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M21 29V16m0 0-5 5m5-5 5 5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <p class="drop-title">Drag &amp; drop file</p>
+              <p class="drop-subtitle">or choose file to upload</p>
+              <button id="chooseFile" class="choose-file" type="button">Choose file</button>
+              <p id="fileName" class="file-name">No file selected</p>
             </div>
-            <p class="drop-title">Drag your OBD file here</p>
-            <p class="drop-subtitle">or choose from your device</p>
-            <button id="chooseFile" class="choose-file" type="button">Choose file</button>
-            <p id="fileName" class="file-name">No file selected</p>
           </div>
-        </div>
-        <p class="hint">Supports TXT, CSV, LOG, PDF, PNG, JPG, and WEBP. No fixed app-level file size cap; very large files depend on server and AI provider capacity.</p>
-        <div class="language-row">
-          <div class="field">
-            <label for="language">Explanation language</label>
-            <select id="language">
-              <option>English</option><option>Hindi</option><option>Hinglish</option><option>Urdu</option>
-              <option>Bengali</option><option>Marathi</option><option>Gujarati</option><option>Tamil</option>
-              <option>Telugu</option><option>Kannada</option><option>Malayalam</option><option>Punjabi</option>
-              <option>Spanish</option><option>French</option><option>Arabic</option><option>Portuguese</option>
-              <option>German</option><option>Japanese</option><option>Chinese</option><option>Other</option>
+          <button id="analyzeButton" class="scan-button" type="submit">Scan</button>
+        </form>
+        <form id="customerForm">
+          <p id="carIdLabel" class="id-label">ID (…)</p>
+          <div class="field"><label for="customerName">Name</label><input id="customerName" name="name" autocomplete="name" maxlength="100" placeholder="Name" required></div>
+          <div class="field"><label for="customerPhone">Pass / Phone</label><input id="customerPhone" name="phone" type="text" autocomplete="tel" maxlength="80" placeholder="Pass / Phone" required></div>
+          <div class="field"><label for="customerAmount">Amount</label><div class="amount-wrap"><span class="currency" aria-hidden="true">₹</span><input id="customerAmount" name="amount" type="number" min="0" max="1000000000" step="0.01" inputmode="decimal" aria-label="Amount in rupees" required></div></div>
+          <button id="addCarButton" class="add-button" type="submit">Add New Car</button>
+        </form>
+        <div id="errorMessage" class="result-message error hidden" role="alert"></div>
+        <div id="successMessage" class="result-message success hidden" role="status" aria-live="polite"></div>
+      </section>
+
+      <section class="report-card" aria-labelledby="reportHeading">
+        <div class="report-heading">
+          <h2 id="reportHeading" class="report-title">OBD Report</h2>
+          <div class="report-actions">
+            <select id="language" class="language-mini" aria-label="Explanation language" title="Explanation language">
+              <option>English</option><option>Hindi</option><option>Hinglish</option><option>Urdu</option><option>Bengali</option><option>Marathi</option><option>Gujarati</option><option>Tamil</option><option>Telugu</option><option>Kannada</option><option>Malayalam</option><option>Punjabi</option><option>Spanish</option><option>French</option><option>Arabic</option><option>Portuguese</option><option>German</option><option>Japanese</option><option>Chinese</option><option>Other</option>
             </select>
-          </div>
-          <div id="customLanguageWrap" class="field hidden">
-            <label for="customLanguage">Enter a language</label>
-            <input id="customLanguage" maxlength="40" placeholder="For example, Swahili">
+            <button id="listenAllButton" class="icon-button" type="button" aria-label="Listen to all findings" title="Listen to all findings"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 10v4h4l5 4V6l-5 4H4Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M16 9a4 4 0 0 1 0 6m2-9a8 8 0 0 1 0 12" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></button>
+            <button id="downloadButton" class="icon-button" type="button" aria-label="Download PDF report" title="Download PDF report" disabled><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 8V4h10v4M6 17H4V9h16v8h-2M7 14h10v7H7z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M17 11h.01" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></button>
           </div>
         </div>
-        <p class="hint">Speech voices depend on the voices available in the browser or device.</p>
-        <button id="analyzeButton" class="primary" type="submit">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.4" stroke="currentColor" stroke-width="1.8"/><path d="m16 16 4.2 4.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-          <span>Analyze diagnostic file</span>
-        </button>
-      </form>
-      <div id="errorMessage" class="alert error hidden" role="alert"></div>
-    </section>
-
-    <section id="resultsPanel" class="panel hidden" aria-labelledby="resultsHeading" aria-live="polite">
-      <div class="results-header">
-        <div>
-          <div class="section-heading" style="margin-bottom:0">
-            <span class="step" aria-hidden="true">02</span>
-            <div><h2 id="resultsHeading">Codes and explanations</h2><p id="resultsSummary" class="results-count"></p></div>
-          </div>
+        <input id="customLanguage" class="custom-language hidden" maxlength="40" placeholder="Enter language, e.g. Swahili" aria-label="Enter explanation language">
+        <div id="resultList" class="result-list" aria-live="polite">
+          <div id="emptyState" class="empty-state"><div><svg width="34" height="34" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 3.8h7l4 4V20a1.2 1.2 0 0 1-1.2 1.2H7A1.2 1.2 0 0 1 5.8 20V5A1.2 1.2 0 0 1 7 3.8Z" stroke="currentColor" stroke-width="1.5"/><path d="M14 4v4h4M8.5 13h7M8.5 16h7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><p>Upload a diagnostic file and select <strong>Scan</strong>. Codes and their explanations will appear here.</p></div></div>
         </div>
-        <button id="listenAllButton" class="secondary" type="button">▶ Listen to all findings</button>
-      </div>
-      <div id="resultList" class="result-list"></div>
-    </section>
-
-    <section id="customerPanel" class="panel hidden" aria-labelledby="customerHeading">
-      <div class="section-heading">
-        <span class="step" aria-hidden="true">03</span>
-        <div><h2 id="customerHeading">Customer and car details</h2><p>Add the customer details to the diagnostic report.</p></div>
-      </div>
-      <form id="customerForm">
-        <div class="customer-fields">
-          <div class="field"><label for="customerName">Customer name</label><input id="customerName" name="name" autocomplete="name" maxlength="100" required></div>
-          <div class="field"><label for="customerPhone">Customer phone number</label><input id="customerPhone" name="phone" type="tel" autocomplete="tel" maxlength="30" required></div>
-          <div class="field"><label for="customerAmount">Customer amount</label><input id="customerAmount" name="amount" type="number" min="0" max="1000000000" step="0.01" inputmode="decimal" placeholder="0.00" required></div>
-        </div>
-        <p class="subtle">Enter the amount in your local currency. No password is requested.</p>
-        <button id="addCarButton" class="primary" type="submit">＋ Add a new car and create PDF</button>
-      </form>
-      <div id="reportMessage" class="alert success hidden" role="status" aria-live="polite"></div>
-      <button id="anotherCarButton" class="secondary next-car hidden" type="button">Analyze another car</button>
-    </section>
-
-    <footer>OBD code explanations are general guidance. Confirm diagnosis with vehicle-specific service information before repairs.</footer>
+        <div class="report-foot"><span id="scanSummary">Waiting for a diagnostic file</span><span>AI generated · verify before repair</span></div>
+      </section>
+    </div>
+    <div id="liveStatus" class="sr-status" aria-live="polite"></div>
   </main>
-
   <script>
     const API_BASE = location.protocol === "file:" ? "http://localhost:4000" : "";
     const fileInput = document.getElementById("fileInput");
     const dropZone = document.getElementById("dropZone");
     const fileName = document.getElementById("fileName");
     const languageSelect = document.getElementById("language");
-    const customLanguageWrap = document.getElementById("customLanguageWrap");
     const customLanguage = document.getElementById("customLanguage");
     const errorMessage = document.getElementById("errorMessage");
-    const resultsPanel = document.getElementById("resultsPanel");
-    const customerPanel = document.getElementById("customerPanel");
-    const reportMessage = document.getElementById("reportMessage");
+    const successMessage = document.getElementById("successMessage");
+    const resultList = document.getElementById("resultList");
+    const emptyState = document.getElementById("emptyState");
     let currentFindings = [];
     let currentAnalysisId = null;
+    let reportDownloadUrl = null;
 
-    function selectedLanguage() {
-      return languageSelect.value === "Other" ? customLanguage.value.trim() : languageSelect.value;
-    }
-    function clearAnalysis() {
-      currentFindings = [];
-      currentAnalysisId = null;
-      resultsPanel.classList.add("hidden");
-      customerPanel.classList.add("hidden");
-      reportMessage.classList.add("hidden");
-      document.getElementById("anotherCarButton").classList.add("hidden");
-      document.getElementById("resultList").replaceChildren();
-      const addCarButton = document.getElementById("addCarButton");
-      addCarButton.disabled = false;
-      addCarButton.textContent = "＋ Add a new car and create PDF";
-    }
-    function showError(message) {
-      errorMessage.textContent = message;
-      errorMessage.classList.remove("hidden");
-    }
-    function setBusy(button, label, busy) {
-      button.disabled = busy;
-      button.querySelector("span") && (button.querySelector("span").textContent = label);
-      if (!button.querySelector("span")) button.textContent = label;
-    }
-    function localeForLanguage(language) {
-      const locales = {
-        English:"en-US",Hindi:"hi-IN",Hinglish:"hi-IN",Urdu:"ur-PK",Bengali:"bn-IN",
-        Marathi:"mr-IN",Gujarati:"gu-IN",Tamil:"ta-IN",Telugu:"te-IN",Kannada:"kn-IN",
-        Malayalam:"ml-IN",Punjabi:"pa-IN",Spanish:"es-ES",French:"fr-FR",Arabic:"ar-SA",
-        Portuguese:"pt-PT",German:"de-DE",Japanese:"ja-JP",Chinese:"zh-CN"
-      };
-      return locales[language] || "en-US";
-    }
-    function speak(text) {
-      if (!("speechSynthesis" in window)) {
-        showError("Speech playback is not supported by this browser.");
-        return;
-      }
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = localeForLanguage(selectedLanguage());
-      const voice = window.speechSynthesis.getVoices().find((item) => item.lang.toLowerCase().startsWith(utterance.lang.slice(0, 2).toLowerCase()));
-      if (voice) utterance.voice = voice;
-      window.speechSynthesis.speak(utterance);
-    }
+    function selectedLanguage(){return languageSelect.value==="Other"?customLanguage.value.trim():languageSelect.value}
+    function showError(message){errorMessage.textContent=message;errorMessage.classList.remove("hidden");successMessage.classList.add("hidden")}
+    function clearMessages(){errorMessage.classList.add("hidden");successMessage.classList.add("hidden")}
+    function clearFindings(){currentFindings=[];currentAnalysisId=null;reportDownloadUrl=null;document.getElementById("downloadButton").disabled=true;resultList.replaceChildren(emptyState);document.getElementById("scanSummary").textContent="Waiting for a diagnostic file";clearMessages()}
+    function setBusy(button,label,busy){button.disabled=busy;button.textContent=label}
+    function localeForLanguage(language){const locales={English:"en-US",Hindi:"hi-IN",Hinglish:"hi-IN",Urdu:"ur-PK",Bengali:"bn-IN",Marathi:"mr-IN",Gujarati:"gu-IN",Tamil:"ta-IN",Telugu:"te-IN",Kannada:"kn-IN",Malayalam:"ml-IN",Punjabi:"pa-IN",Spanish:"es-ES",French:"fr-FR",Arabic:"ar-SA",Portuguese:"pt-PT",German:"de-DE",Japanese:"ja-JP",Chinese:"zh-CN"};return locales[language]||"en-US"}
+    function speak(text){if(!("speechSynthesis" in window)){showError("Speech playback is not supported by this browser.");return}window.speechSynthesis.cancel();const utterance=new SpeechSynthesisUtterance(text);utterance.lang=localeForLanguage(selectedLanguage());const voice=window.speechSynthesis.getVoices().find(item=>item.lang.toLowerCase().startsWith(utterance.lang.slice(0,2).toLowerCase()));if(voice)utterance.voice=voice;window.speechSynthesis.speak(utterance)}
+    async function loadNextId(){try{const response=await fetch(API_BASE+"/api/next-car-id");const data=await response.json();if(response.ok)document.getElementById("carIdLabel").textContent="ID ("+data.carId+")"}catch{document.getElementById("carIdLabel").textContent="ID (101+)"}}
+    function resetOnNewInput(){clearFindings();document.getElementById("scanSummary").textContent=fileInput.files[0]?"Ready to scan":"Waiting for a diagnostic file"}
+    document.getElementById("chooseFile").addEventListener("click",event=>{event.stopPropagation();fileInput.click()});
+    dropZone.addEventListener("click",event=>{if(!event.target.closest("button"))fileInput.click()});
+    dropZone.addEventListener("keydown",event=>{if(event.key==="Enter"||event.key===" "){event.preventDefault();fileInput.click()}});
+    ["dragenter","dragover"].forEach(name=>dropZone.addEventListener(name,event=>{event.preventDefault();dropZone.classList.add("dragging")}));
+    ["dragleave","drop"].forEach(name=>dropZone.addEventListener(name,event=>{event.preventDefault();dropZone.classList.remove("dragging")}));
+    dropZone.addEventListener("drop",event=>{const file=event.dataTransfer.files[0];if(!file)return;const transfer=new DataTransfer();transfer.items.add(file);fileInput.files=transfer.files;fileName.textContent=file.name;resetOnNewInput()});
+    fileInput.addEventListener("change",()=>{fileName.textContent=fileInput.files[0]?.name||"No file selected";resetOnNewInput()});
+    languageSelect.addEventListener("change",()=>{const value=languageSelect.value;customLanguage.classList.toggle("hidden",value!=="Other");resetOnNewInput()});
+    customLanguage.addEventListener("input",resetOnNewInput);
 
-    document.getElementById("chooseFile").addEventListener("click", (event) => {
-      event.stopPropagation();
-      fileInput.click();
-    });
-    dropZone.addEventListener("click", (event) => {
-      if (!event.target.closest("button")) fileInput.click();
-    });
-    dropZone.addEventListener("keydown", (event) => {
-      if (event.key === "Enter" || event.key === " ") {
-        event.preventDefault();
-        fileInput.click();
-      }
-    });
-    ["dragenter", "dragover"].forEach((name) => dropZone.addEventListener(name, (event) => {
-      event.preventDefault();
-      dropZone.classList.add("dragging");
-    }));
-    ["dragleave", "drop"].forEach((name) => dropZone.addEventListener(name, (event) => {
-      event.preventDefault();
-      dropZone.classList.remove("dragging");
-    }));
-    dropZone.addEventListener("drop", (event) => {
-      const file = event.dataTransfer.files[0];
-      if (!file) return;
-      const transfer = new DataTransfer();
-      transfer.items.add(file);
-      fileInput.files = transfer.files;
-      fileName.textContent = file.name;
-      errorMessage.classList.add("hidden");
-      clearAnalysis();
-    });
-    fileInput.addEventListener("change", () => {
-      fileName.textContent = fileInput.files[0]?.name || "No file selected";
-      errorMessage.classList.add("hidden");
-      clearAnalysis();
-    });
-    languageSelect.addEventListener("change", () => {
-      const custom = languageSelect.value === "Other";
-      customLanguageWrap.classList.toggle("hidden", !custom);
-      customLanguage.required = custom;
-      clearAnalysis();
-    });
-    customLanguage.addEventListener("input", clearAnalysis);
-
-    document.getElementById("scanForm").addEventListener("submit", async (event) => {
-      event.preventDefault();
-      errorMessage.classList.add("hidden");
-      reportMessage.classList.add("hidden");
-      clearAnalysis();
-      const file = fileInput.files[0];
-      if (!file) {
-        showError("Choose a diagnostic file first.");
-        return;
-      }
-      const language = selectedLanguage();
-      if (!language || language === "Other") {
-        showError("Enter the language for the explanation.");
-        return;
-      }
-      const button = document.getElementById("analyzeButton");
-      setBusy(button, "Reading scan and explaining codes…", true);
-      try {
-        const body = new FormData();
-        body.append("file", file);
-        body.append("language", language);
-        const response = await fetch(API_BASE + "/api/analyze-file", { method: "POST", body });
-        const data = await response.json().catch(() => ({}));
-        if (!response.ok) throw new Error(data.error || "The diagnostic file could not be analyzed.");
-        currentFindings = Array.isArray(data.codes) ? data.codes : [];
-        currentAnalysisId = data.analysisId || null;
-        document.getElementById("resultsSummary").textContent =
-          currentFindings.length + (currentFindings.length === 1 ? " code found · explained in " : " codes found · explained in ") + language;
-        if (!currentFindings.length) {
-          document.getElementById("resultList").innerHTML =
-            '<div class="alert error">No readable OBD-II codes were found. Try a clearer scan or a file that includes the diagnostic codes.</div>';
-          resultsPanel.classList.remove("hidden");
-          return;
-        }
-        const rtl = ["Urdu", "Arabic"].includes(language);
-        document.getElementById("resultList").innerHTML = currentFindings.map((item, index) =>
-          '<article class="result-card">' +
-            '<div class="result-top"><span class="code">' + item.code + '</span>' +
-            '<button class="listen" type="button" data-index="' + index + '" aria-label="Listen to ' + item.code + '">▶ Listen</button></div>' +
-            '<p class="meaning"' + (rtl ? ' dir="rtl"' : '') + '></p>' +
-          '</article>'
-        ).join("");
-        document.querySelectorAll(".meaning").forEach((node, index) => { node.textContent = currentFindings[index].meaning; });
-        document.querySelectorAll(".listen").forEach((button) => button.addEventListener("click", () => {
-          const row = currentFindings[Number(button.dataset.index)];
-          speak(row.code + ". " + row.meaning);
-        }));
-        resultsPanel.classList.remove("hidden");
-        customerPanel.classList.remove("hidden");
-      } catch (error) {
-        showError(error instanceof TypeError
-          ? "Could not connect to the diagnostic server. Start the backend and open this site from its address."
-          : (error.message || "Unable to analyze this file."));
-      } finally {
-        setBusy(button, "Analyze diagnostic file", false);
-      }
+    document.getElementById("scanForm").addEventListener("submit",async event=>{
+      event.preventDefault();clearMessages();clearFindings();const file=fileInput.files[0];if(!file){showError("Choose or drop a diagnostic file first.");return}const language=selectedLanguage();if(!language||language==="Other"){showError("Enter the language for the explanation.");return}
+      const button=document.getElementById("analyzeButton");setBusy(button,"Reading scan…",true);document.getElementById("scanSummary").textContent="Extracting and explaining fault codes";
+      try{const body=new FormData();body.append("file",file);body.append("language",language);const response=await fetch(API_BASE+"/api/analyze-file",{method:"POST",body});const data=await response.json().catch(()=>({}));if(!response.ok)throw new Error(data.error||"The diagnostic file could not be analyzed.");currentFindings=Array.isArray(data.codes)?data.codes:[];currentAnalysisId=data.analysisId||null;
+        if(!currentFindings.length){document.getElementById("scanSummary").textContent="No codes detected";showError("No readable OBD-II codes were found. Try a clearer scan or a file that includes diagnostic codes.");return}
+        resultList.replaceChildren();const rtl=["Urdu","Arabic"].includes(language);
+        currentFindings.forEach((item,index)=>{const article=document.createElement("article");article.className="result-item";const top=document.createElement("div");top.className="result-top";const code=document.createElement("h3");code.className="code";code.textContent=item.code;const listen=document.createElement("button");listen.className="listen-button";listen.type="button";listen.textContent="▶ Listen";listen.setAttribute("aria-label","Listen to "+item.code);listen.addEventListener("click",()=>speak(item.code+". "+item.meaning));top.append(code,listen);const meaning=document.createElement("p");meaning.className="meaning";meaning.textContent=item.meaning||"No explanation was returned.";if(rtl)meaning.dir="rtl";article.append(top,meaning);const tags=document.createElement("div");tags.className="finding-tags";["Code meaning","What error it indicates","Common causes"].forEach(label=>{const tag=document.createElement("span");tag.textContent=label;tags.append(tag)});article.append(tags);resultList.append(article)});
+        document.getElementById("scanSummary").textContent=currentFindings.length+ (currentFindings.length===1?" fault code found":" fault codes found")+" · "+language;document.getElementById("liveStatus").textContent="Scan complete. "+currentFindings.length+" codes found.";
+      }catch(error){document.getElementById("scanSummary").textContent="Scan could not be completed";showError(error instanceof TypeError?"Could not connect to the diagnostic server. Open this page from the running backend and try again.":error.message||"Unable to analyze this file.")}
+      finally{setBusy(button,"Scan",false)}
     });
 
-    document.getElementById("listenAllButton").addEventListener("click", () => {
-      speak(currentFindings.map((row) => row.code + ". " + row.meaning).join(". "));
-    });
+    document.getElementById("listenAllButton").addEventListener("click",()=>{if(!currentFindings.length){showError("Scan a diagnostic file first to listen to the findings.");return}speak(currentFindings.map(row=>row.code+". "+row.meaning).join(". "))});
+    document.getElementById("downloadButton").addEventListener("click",()=>{if(reportDownloadUrl)window.location.href=reportDownloadUrl});
 
-    document.getElementById("customerForm").addEventListener("submit", async (event) => {
-      event.preventDefault();
-      errorMessage.classList.add("hidden");
-      reportMessage.classList.add("hidden");
-      const form = event.currentTarget;
-      if (!form.reportValidity()) return;
-      if (!currentFindings.length) {
-        showError("Analyze a diagnostic file before adding a car.");
-        return;
-      }
-      const amount = Number(document.getElementById("customerAmount").value);
-      if (!Number.isFinite(amount) || amount < 0) {
-        showError("Enter a valid customer amount.");
-        return;
-      }
-      const button = document.getElementById("addCarButton");
-      button.disabled = true;
-      button.textContent = "Adding car and creating PDF…";
-      try {
-        const response = await fetch(API_BASE + "/api/reports", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            name: document.getElementById("customerName").value,
-            phone: document.getElementById("customerPhone").value,
-            amount,
-            language: selectedLanguage(),
-            analysisId: currentAnalysisId,
-            codes: currentFindings.map((row) => row.code)
-          })
-        });
-        const data = await response.json().catch(() => ({}));
-        if (!response.ok) throw new Error(data.error || "Could not create the report.");
-        const carId = data.carId || data.customerId;
-        reportMessage.innerHTML =
-          '<span class="car-badge">CAR ID ' + carId + '</span><br>' +
-          'Car added. The diagnostic report is ready.' +
-          '<br><a id="reportDownload" class="report-link" href="' + data.downloadUrl + '" download>↓ Download customer report (PDF)</a>';
-        reportMessage.classList.remove("hidden");
-        document.getElementById("anotherCarButton").classList.remove("hidden");
-        button.textContent = "Car added";
-        button.disabled = true;
-      } catch (error) {
-        showError(error instanceof TypeError
-          ? "Could not connect to the diagnostic server. Check that the backend is running."
-          : (error.message || "Unable to create the report."));
-        button.disabled = false;
-        button.textContent = "＋ Add a new car and create PDF";
-      }
+    document.getElementById("customerForm").addEventListener("submit",async event=>{
+      event.preventDefault();clearMessages();const form=event.currentTarget;if(!form.reportValidity())return;if(!currentFindings.length){showError("Scan the diagnostic file before adding a car.");return}const amount=Number(document.getElementById("customerAmount").value);if(!Number.isFinite(amount)||amount<0){showError("Enter a valid amount.");return}
+      const button=document.getElementById("addCarButton");button.disabled=true;button.textContent="Adding car and creating PDF…";
+      try{const response=await fetch(API_BASE+"/api/reports",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({name:document.getElementById("customerName").value,phone:document.getElementById("customerPhone").value,amount,language:selectedLanguage(),analysisId:currentAnalysisId,codes:currentFindings.map(row=>row.code)})});const data=await response.json().catch(()=>({}));if(!response.ok)throw new Error(data.error||"Could not create the report.");reportDownloadUrl=data.downloadUrl;document.getElementById("downloadButton").disabled=false;const link=document.createElement("a");link.className="report-link";link.href=data.downloadUrl;link.download="OBD-Diagnostic-Report.pdf";link.textContent="Download PDF report";successMessage.replaceChildren(document.createTextNode("Car ID "+data.carId+" added. "),link);successMessage.classList.remove("hidden");document.getElementById("carIdLabel").textContent="ID ("+data.carId+") · saved";document.getElementById("liveStatus").textContent="Car "+data.carId+" added. PDF ready to download.";await loadNextId();
+      }catch(error){showError(error instanceof TypeError?"Could not connect to the diagnostic server. Check that the backend is running.":error.message||"Unable to create the report.")}
+      finally{button.disabled=false;button.textContent="Add New Car"}
     });
-
-    document.getElementById("anotherCarButton").addEventListener("click", () => {
-      fileInput.value = "";
-      fileName.textContent = "No file selected";
-      errorMessage.classList.add("hidden");
-      clearAnalysis();
-      const button = document.getElementById("addCarButton");
-      button.disabled = false;
-      button.textContent = "＋ Add a new car and create PDF";
-      document.getElementById("uploadHeading").scrollIntoView({ behavior: "smooth", block: "start" });
-    });
+    loadNextId();
   </script>
 </body>
 </html>

@@ -39,5 +39,10 @@ export function createIdStore(dataDirectory) {
     return operation;
   }
 
-  return { nextId: allocate };
+  async function peekNextId() {
+    await fs.mkdir(dataDirectory, { recursive: true });
+    return (await loadLastId()) + 1;
+  }
+
+  return { nextId: allocate, peekNextId };
 }

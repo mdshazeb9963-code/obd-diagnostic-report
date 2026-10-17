@@ -88,8 +88,8 @@ export function writeDiagnosticPdf({ outputPath, report }) {
     sectionTitle(doc, "Customer information");
     addField(doc, "Car ID", String(report.carId));
     addField(doc, "Name", report.name, report.language);
-    addField(doc, "Phone", report.phone, report.language);
-    addField(doc, "Customer amount", Number(report.amount).toFixed(2), report.language);
+    addField(doc, "Pass / Phone", report.phone, report.language);
+    addField(doc, "Amount (INR)", Number(report.amount).toFixed(2), report.language);
     addField(doc, "Explanation language", report.language, report.language);
     sectionTitle(doc, "Diagnostic findings");
 
