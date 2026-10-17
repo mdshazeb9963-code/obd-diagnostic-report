@@ -1,6 +1,12 @@
 const API_URL = "https://generativelanguage.googleapis.com/v1beta/models";
 const DEFAULT_MODEL = "gemini-3.6-flash";
 const OBD_CODE_PATTERN = /^[PBCU][0-3][0-9A-F]{3}$/;
+const LANGUAGE_PATTERN = /^[\p{L}\p{M}\s().'-]{2,40}$/u;
+
+function normalizeLanguage(value) {
+  const language = typeof value === "string" ? value.trim() : "";
+  return LANGUAGE_PATTERN.test(language) ? language : "English";
+}
 
 function getApiKey() {
   const key = process.env.GEMINI_API_KEY;
@@ -124,7 +130,7 @@ export async function extractCodesFromAttachment(file) {
   return [...new Set(codes)].slice(0, 25);
 }
 
-export async function lookupObdMeaning(code) {
+export async function lookupObdMeaning(code, requestedLanguage = "English") {
   const normalized = String(code).trim().toUpperCase();
   if (!OBD_CODE_PATTERN.test(normalized)) {
     const error = new Error("Enter a valid 5-character OBD-II code, such as P0300.");
@@ -132,19 +138,22 @@ export async function lookupObdMeaning(code) {
     throw error;
   }
 
+  const language = normalizeLanguage(requestedLanguage);
   const prompt = [
     `Explain OBD-II diagnostic trouble code ${normalized}.`,
-    "Use short plain-language sections with these labels:",
-    "Meaning, What system/error it indicates, Common causes, Possible symptoms.",
-    "Clarify that the code points to a detected condition and does not prove a part failed.",
-    "Mention when the exact interpretation can vary by make/model/year.",
-    "Do not invent vehicle-specific details or claim certainty beyond the code definition."
+    `Write the complete explanation in ${language}; if the requested language is Hinglish, use conversational Hindi written in Latin script.`,
+    "Use these short sections, translating each heading naturally into the requested language:",
+    "Code breakdown (explain the letter and each relevant digit/group using standard OBD-II conventions),",
+    "Meaning, Error indicated, Common causes, Possible symptoms.",
+    "Explain what condition the vehicle computer detected and why it may occur.",
+    "Clarify that a code does not prove a specific part failed; mention where interpretation can vary by make/model/year.",
+    "Do not invent vehicle-specific details, repairs, or certainty beyond the code definition."
   ].join(" ");
 
   return generateContent([{ text: prompt }]);
 }
 
-export async function explainCodes(codes) {
+export async function explainCodes(codes, language = "English") {
   const results = new Array(codes.length);
   let nextIndex = 0;
   const workerCount = Math.min(4, codes.length);
@@ -152,7 +161,7 @@ export async function explainCodes(codes) {
     while (nextIndex < codes.length) {
       const index = nextIndex++;
       const code = codes[index];
-      results[index] = { code, meaning: await lookupObdMeaning(code) };
+      results[index] = { code, meaning: await lookupObdMeaning(code, language) };
     }
   }));
   return results;
