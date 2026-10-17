@@ -17,7 +17,7 @@ npm start
 
 Open <http://localhost:4000>. The server also exposes `GET /api/health`.
 
-The backend defaults to `gemini-3.6-flash` and retries temporary service errors. The upload endpoint accepts TXT, CSV, and LOG files (code extraction runs locally), plus PDF, PNG, JPG, and WEBP scans (Gemini reads the attachment). The selected language is sent to the Gemini lookup service so both the code breakdown and its explanation use that language. The PDF report contains customer name, phone, amount, language, findings, and Car ID.
+The backend defaults to `gemini-3.8-flash` through Google's Interactions API and retries temporary service errors. A legacy `GEMINI_MODEL=gemini-2.5-flash` value is automatically mapped to Gemini 3.8 Flash. The upload endpoint accepts TXT, CSV, and LOG files (code extraction runs locally), plus PDF, PNG, JPG, and WEBP scans (Gemini reads the attachment). The selected language is sent to the Gemini lookup service so both the code breakdown and its explanation use that language. The PDF report contains customer name, phone, amount, language, findings, and Car ID.
 
 ## Endpoints
 

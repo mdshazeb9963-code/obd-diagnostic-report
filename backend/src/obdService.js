@@ -1,5 +1,6 @@
-const API_URL = "https://generativelanguage.googleapis.com/v1beta/models";
-const DEFAULT_MODEL = "gemini-3.6-flash";
+const API_URL = "https://generativelanguage.googleapis.com/v1beta/interactions";
+const DEFAULT_MODEL = "gemini-3.8-flash";
+let warnedAboutRetiredModel = false;
 const OBD_CODE_PATTERN = /^[PBCU][0-3][0-9A-F]{3}$/;
 const LANGUAGE_PATTERN = /^[\p{L}\p{M}\s().'-]{2,40}$/u;
 
@@ -18,22 +19,34 @@ function getApiKey() {
   return key;
 }
 
-async function generateContent(parts, { maxOutputTokens = 2048 } = {}) {
-  const model = process.env.GEMINI_MODEL || DEFAULT_MODEL;
-  const url = `${API_URL}/${encodeURIComponent(model)}:generateContent`;
+function configuredModel() {
+  const configured = (process.env.GEMINI_MODEL || "").trim().replace(/^models\//i, "");
+  if (configured === "gemini-2.5-flash") {
+    if (!warnedAboutRetiredModel) {
+      console.warn("GEMINI_MODEL points to retired gemini-2.5-flash; using gemini-3.8-flash instead.");
+      warnedAboutRetiredModel = true;
+    }
+    return DEFAULT_MODEL;
+  }
+  return configured || DEFAULT_MODEL;
+}
+
+async function generateInteraction(input, { maxOutputTokens = 2048 } = {}) {
+  const model = configuredModel();
   let payload;
   for (let attempt = 0; attempt < 3; attempt += 1) {
-    const response = await fetch(url, {
+    const response = await fetch(API_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "x-goog-api-key": getApiKey()
       },
       body: JSON.stringify({
-        contents: [{ role: "user", parts }],
-        generationConfig: {
-          thinkingConfig: { thinkingLevel: "low" },
-          maxOutputTokens: maxOutputTokens * (2 ** attempt)
+        model,
+        input,
+        generation_config: {
+          thinking_level: "low",
+          max_output_tokens: maxOutputTokens * (2 ** attempt)
         }
       }),
       signal: AbortSignal.timeout(45000)
@@ -41,12 +54,21 @@ async function generateContent(parts, { maxOutputTokens = 2048 } = {}) {
 
     payload = await response.json().catch(() => ({}));
     if (response.ok) {
-      if (payload?.candidates?.[0]?.finishReason !== "MAX_TOKENS") break;
-      if (attempt < 2) continue;
-      const error = new Error("Gemini's answer was truncated. Retry with a shorter file.");
-      error.statusCode = 502;
-      error.publicMessage = error.message;
-      throw error;
+      if (payload?.status === "incomplete") {
+        if (attempt < 2) continue;
+        const error = new Error("Gemini's answer was truncated. Retry with a shorter file.");
+        error.statusCode = 502;
+        error.publicMessage = error.message;
+        throw error;
+      }
+      if (payload?.status === "failed") {
+        const providerMessage = payload?.errors?.[0]?.message || "Gemini could not complete the request.";
+        const error = new Error(providerMessage);
+        error.statusCode = 502;
+        error.publicMessage = `Gemini could not complete this request: ${providerMessage}`;
+        throw error;
+      }
+      break;
     }
 
     const retryable = [408, 429, 500, 502, 503, 504].includes(response.status);
@@ -56,7 +78,7 @@ async function generateContent(parts, { maxOutputTokens = 2048 } = {}) {
       continue;
     }
 
-    const providerMessage = payload?.error?.message || `Gemini returned ${response.status}`;
+    const providerMessage = payload?.error?.message || payload?.errors?.[0]?.message || `Gemini returned ${response.status}`;
     const error = new Error(providerMessage);
     error.statusCode = response.status === 429 || response.status === 503 ? 503 : 502;
     error.publicMessage = error.statusCode === 503
@@ -65,8 +87,10 @@ async function generateContent(parts, { maxOutputTokens = 2048 } = {}) {
     throw error;
   }
 
-  const result = payload?.candidates?.[0]?.content?.parts
-    ?.filter((part) => part.text && !part.thought)
+  const result = payload?.steps
+    ?.filter((step) => step.type === "model_output")
+    ?.flatMap((step) => step.content || [])
+    ?.filter((part) => part.type === "text" && typeof part.text === "string")
     ?.map((part) => part.text)
     .join("\n")
     .trim();
@@ -97,14 +121,19 @@ export async function extractCodesFromAttachment(file) {
     "Use uppercase letters, include no codes that are not visible or readable,",
     "deduplicate them, and return {\"codes\":[]} if none are present."
   ].join(" ");
-  const text = await generateContent([
-    { text: prompt },
-    {
-      inline_data: {
-        mime_type: file.mimetype,
-        data: file.buffer.toString("base64")
-      }
-    }
+  const extension = file.originalname.toLowerCase();
+  const isPdf = extension.endsWith(".pdf");
+  const mimeType = isPdf ? "application/pdf"
+    : extension.endsWith(".png") ? "image/png"
+      : extension.endsWith(".webp") ? "image/webp" : "image/jpeg";
+  const attachment = {
+    type: isPdf ? "document" : "image",
+    mime_type: mimeType,
+    data: file.buffer.toString("base64")
+  };
+  const text = await generateInteraction([
+    attachment,
+    { type: "text", text: prompt }
   ], { maxOutputTokens: 2048 });
 
   let parsed;
@@ -150,7 +179,7 @@ export async function lookupObdMeaning(code, requestedLanguage = "English") {
     "Do not invent vehicle-specific details, repairs, or certainty beyond the code definition."
   ].join(" ");
 
-  return generateContent([{ text: prompt }]);
+  return generateInteraction([{ type: "text", text: prompt }]);
 }
 
 export async function explainCodes(codes, language = "English") {

@@ -1,6 +1,6 @@
 # OBD Diagnostic Report
 
-This repo contains the Smart Library OBD assistant. The page follows a two-column workshop layout with drag-and-drop upload, customer name, Pass / Phone, amount in INR, and a live OBD report card. Upload a scan to find and explain each code in the selected language, listen to findings, and download a customer PDF.
+This repo contains the Smart Library OBD assistant. The page follows a two-column workshop layout with drag-and-drop upload, customer name, Pass / Phone, amount in INR, and a live OBD report card. Upload a scan to find and explain each code in the selected language, listen to findings, and download a customer PDF. Gemini 3.8 Flash handles document reading and code explanations through Google's Interactions API.
 
 ## Run locally
 
